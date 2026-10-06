@@ -1,0 +1,365 @@
+<link rel="stylesheet" href="/css/ai.css">
+
+<div class="ai-page">
+
+    <!-- AI Hero Section -->
+    <div class="ai-hero">
+
+        <div class="ai-hero-icon">
+            ✨
+        </div>
+
+        <h1>Where will you go next?</h1>
+
+        <p>
+            Let Velora AI help you discover stays,
+            plan trips, and find your perfect destination.
+        </p>
+
+    </div>
+
+
+    <!-- Chat Container -->
+    <div class="ai-chat-container">
+
+        <!-- Messages -->
+        <div id="chatMessages" class="chat-messages">
+
+            <!-- Initial AI Message -->
+            <div class="message ai-message">
+
+                <div class="message-icon">
+                    ✨
+                </div>
+
+                <div class="message-content">
+
+                    <span class="message-label">
+                        Velora AI
+                    </span>
+
+                    <p>
+                        Hi! 👋 Tell me where you're thinking
+                        of going, and I'll help you plan your trip.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Suggestions -->
+        <div class="suggestion-section">
+
+            <p class="suggestion-title">
+                💡 Try asking
+            </p>
+        
+            <div id="suggestions" class="suggestions">
+        
+                <button
+                    type="button"
+                    onclick="useSuggestion('Find hotels in a destination within my budget')"
+                >
+                    🏨
+                    <span>
+                        Find hotels
+                        <small>Based on location & budget</small>
+                    </span>
+                </button>
+        
+        
+                <button
+                    type="button"
+                    onclick="useSuggestion('Plan a 3 day trip for me')"
+                >
+                    🗺️
+                    <span>
+                        Plan a trip
+                        <small>Create an itinerary</small>
+                    </span>
+                </button>
+        
+        
+                <button
+                    type="button"
+                    onclick="useSuggestion('Find the highest rated hotels in a destination')"
+                >
+                    ⭐
+                    <span>
+                        Top rated stays
+                        <small>Find highly rated places</small>
+                    </span>
+                </button>
+        
+        
+                <button
+                    type="button"
+                    onclick="useSuggestion('Give me some useful travel tips')"
+                >
+                    💡
+                    <span>
+                        Travel tips
+                        <small>Get advice for your journey</small>
+                    </span>
+                </button>
+        
+            </div>
+        
+        </div>
+
+        <!-- Chat Input -->
+        <form id="chatForm" class="chat-input-container">
+
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="Ask Velora AI anything about travel..."
+                autocomplete="off"
+            >
+
+            <button
+                type="submit"
+                id="sendButton"
+                aria-label="Send message"
+            >
+                ➤
+            </button>
+
+        </form>
+
+
+        <!-- Disclaimer -->
+        <div class="ai-disclaimer">
+            Velora AI can make mistakes. Always verify important travel information.
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const chatForm = document.getElementById("chatForm");
+const messageInput = document.getElementById("messageInput");
+const chatMessages = document.getElementById("chatMessages");
+const sendButton = document.getElementById("sendButton");
+
+
+function addMessage(message, role) {
+
+    const messageDiv = document.createElement("div");
+
+    messageDiv.classList.add(
+        "message",
+        role === "user"
+            ? "user-message"
+            : "ai-message"
+    );
+
+
+    if (role === "user") {
+
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <p>${message}</p>
+            </div>
+        `;
+
+    } else {
+
+        messageDiv.innerHTML = `
+            <div class="message-icon">
+                ✨
+            </div>
+
+            <div class="message-content">
+
+                <span class="message-label">
+                    Velora AI
+                </span>
+
+                <p>${message}</p>
+
+            </div>
+        `;
+
+    }
+
+
+    chatMessages.appendChild(messageDiv);
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+}
+
+
+function showLoading() {
+
+    const loadingDiv =
+        document.createElement("div");
+
+
+    loadingDiv.id = "aiLoading";
+
+
+    loadingDiv.classList.add(
+        "message",
+        "ai-message"
+    );
+
+
+    loadingDiv.innerHTML = `
+        <div class="message-icon">
+            ✨
+        </div>
+
+        <div class="message-content">
+
+            <span class="message-label">
+                Velora AI
+            </span>
+
+            <div class="typing">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+        </div>
+    `;
+
+
+    chatMessages.appendChild(loadingDiv);
+
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+}
+
+
+function removeLoading() {
+
+    const loading =
+        document.getElementById("aiLoading");
+
+
+    if (loading) {
+        loading.remove();
+    }
+}
+
+
+async function sendMessage(message) {
+
+    if (!message.trim()) {
+        return;
+    }
+
+
+    addMessage(message, "user");
+
+
+    messageInput.value = "";
+
+
+    sendButton.disabled = true;
+
+
+    showLoading();
+
+
+    try {
+
+        const response = await fetch(
+            "/ai/chat",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    message: message
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        removeLoading();
+
+
+        if (!response.ok) {
+
+            addMessage(
+                "Sorry, something went wrong. Please try again.",
+                "ai"
+            );
+
+            return;
+        }
+
+
+        addMessage(
+            data.answer,
+            "ai"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "AI Chat Error:",
+            error
+        );
+
+
+        removeLoading();
+
+
+        addMessage(
+            "Unable to connect to the AI assistant.",
+            "ai"
+        );
+
+    } finally {
+
+        sendButton.disabled = false;
+
+        messageInput.focus();
+    }
+}
+
+
+chatForm.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const message =
+            messageInput.value.trim();
+
+
+        sendMessage(message);
+    }
+);
+
+
+function useSuggestion(message) {
+
+    messageInput.value = message;
+
+    messageInput.focus();
+}
+
+</script>

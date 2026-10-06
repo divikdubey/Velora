@@ -1,7 +1,6 @@
 {
   "engines": {
     "node": ">=18.0.0"
-
   },
   "name": "majorproject",
   "version": "1.0.0",
@@ -15,6 +14,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/genai": "^2.27.0",
     "@mapbox/mapbox-sdk": "^0.16.2",
     "cloudinary": "^2.11.0",
     "connect-flash": "^0.1.1",

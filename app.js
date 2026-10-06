@@ -22,8 +22,10 @@ const User = require("./models/user.js");
 const listings=require("./routes/listing.js");
 const review=require("./routes/review.js");
 const user=require("./routes/user.js");
+const aiRouter = require("./routes/ai.js");
 
 const dbUrl=process.env.ATLASDB_URL;
+app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 
@@ -99,6 +101,7 @@ app.use("/", user);
 app.get("/",(req,res)=>{
   res.redirect("/listings");
 });
+app.use("/ai", aiRouter);
 
 app.all("/*splat",(req,res,next)=>{
   next(new ExpressError(404,"Page not found!"));
