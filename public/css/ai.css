@@ -521,3 +521,35 @@
         font-size: 1.7rem;
     }
 }
+
+.ai-response {
+    line-height: 1.6;
+}
+
+.ai-response p {
+    margin: 0 0 10px;
+}
+
+.ai-response p:last-child {
+    margin-bottom: 0;
+}
+
+.ai-response strong {
+    font-weight: 700;
+}
+
+.ai-response ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.ai-response li {
+    margin-bottom: 6px;
+}
+
+.ai-response h1,
+.ai-response h2,
+.ai-response h3 {
+    margin-top: 12px;
+    margin-bottom: 8px;
+}

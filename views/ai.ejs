@@ -140,6 +140,7 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
 
@@ -178,13 +179,15 @@ function addMessage(message, role) {
 
             <div class="message-content">
 
-                <span class="message-label">
-                    Velora AI
-                </span>
+              <span class="message-label">
+                 Velora AI
+              </span>
 
-                <p>${message}</p>
-
+            <div class="ai-response">
+                  ${marked.parse(message)}
             </div>
+
+     </div>
         `;
 
     }
